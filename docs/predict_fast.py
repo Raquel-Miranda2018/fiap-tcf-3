@@ -61,4 +61,4 @@ df_out['pred_proba'] = probs
 df_out['pred_label'] = labels
 out_path = os.path.join(MODEL_DIR, "predictions_from_model_fast.csv")
 df_out.to_csv(out_path, index=False)
-echo "Predictions saved to:" $out_path
+print("Predictions saved to:", out_path)
