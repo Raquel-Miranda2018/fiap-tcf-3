@@ -60,7 +60,6 @@ def metodo_cotovelo(dados, k_range=range(2, 11)):
     ax.set_xlabel("Número de clusters (k)")
     ax.set_ylabel("Inércia (soma dos quadrados intra-cluster)")
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -80,7 +79,6 @@ def plotar_clusters(dados_2d, labels):
     ax.set_ylabel("Componente Principal 2")
     plt.colorbar(scatter, ax=ax, label="Cluster")
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 

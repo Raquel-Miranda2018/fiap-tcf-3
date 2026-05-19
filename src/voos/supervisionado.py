@@ -125,7 +125,6 @@ def plotar_curva_roc(y_test, y_prob, nome_modelo="Modelo"):
     ax.set_title("Curva ROC")
     ax.legend()
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -147,5 +146,4 @@ def plotar_matriz_confusao(y_test, y_pred):
     ax.set_ylabel("Real")
     ax.set_title("Matriz de Confusão")
     plt.tight_layout()
-    plt.close(fig)
     return fig

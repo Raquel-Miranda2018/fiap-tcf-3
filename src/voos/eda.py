@@ -52,7 +52,6 @@ def distribuicao_atrasos(df):
         ax.legend()
 
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -73,7 +72,6 @@ def atrasos_por_companhia(df):
     ax.axhline(y=0, color="black", linewidth=0.5)
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -100,7 +98,6 @@ def atrasos_por_aeroporto(df, top_n=20):
     ax.set_xlabel("Atraso médio (minutos)")
     ax.set_ylabel("Aeroporto de origem")
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -126,7 +123,6 @@ def atrasos_por_dia_semana(df):
     ax.set_ylabel("Atraso médio (minutos)")
     ax.axhline(y=0, color="black", linewidth=0.5)
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -156,7 +152,6 @@ def atrasos_por_mes(df):
     ax.set_ylabel("Atraso médio (minutos)")
     ax.axhline(y=0, color="black", linewidth=0.5)
     plt.tight_layout()
-    plt.close(fig)
     return fig
 
 
@@ -173,5 +168,4 @@ def correlacao_variaveis(df):
     sns.heatmap(corr, annot=False, cmap="RdBu_r", center=0, ax=ax, fmt=".2f")
     ax.set_title("Matriz de correlação — variáveis numéricas")
     plt.tight_layout()
-    plt.close(fig)
     return fig
