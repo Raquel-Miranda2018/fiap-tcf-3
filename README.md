@@ -74,6 +74,7 @@ make clean      # Limpar artefatos
 ## Equipe
 
 - Bruno Bento
+- Raquel Miranda
 
 ## Licença
 
