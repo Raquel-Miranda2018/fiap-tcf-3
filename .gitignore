@@ -18,13 +18,3 @@ __pycache__/
 .env
 .vscode/
 .idea/
-requirements.txt
-
-pandas
-numpy
-scikit-learn
-joblib
-matplotlib
-seaborn
-pyarrow
-fastparquet
