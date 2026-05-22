@@ -8,10 +8,12 @@ from voos.features import (
     selecionar_features_modelo,
 )
 from voos.supervisionado import (
+    analise_threshold,
     avaliar_modelo,
     comparar_modelos,
     dividir_dados,
     importancia_features,
+    plotar_curva_precision_recall,
     plotar_curva_roc,
     plotar_matriz_confusao,
     treinar_modelo,
@@ -59,12 +61,12 @@ def test_treinar_modelo_retorna_objeto_com_predict(df_amostra_voos):
 
 
 def test_avaliar_modelo_chaves(df_amostra_voos):
-    """Resultado deve conter: accuracy, precision, recall, f1, roc_auc."""
+    """Resultado deve conter: accuracy, precision, recall, f1, roc_auc, pr_auc."""
     df_feat, target = _preparar_dados(df_amostra_voos)
     X_train, X_test, y_train, y_test = dividir_dados(df_feat, target)
     modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
     resultado = avaliar_modelo(modelo, X_test, y_test)
-    chaves = {"accuracy", "precision", "recall", "f1", "roc_auc"}
+    chaves = {"accuracy", "precision", "recall", "f1", "roc_auc", "pr_auc"}
     assert chaves.issubset(set(resultado.keys()))
 
 
@@ -74,7 +76,7 @@ def test_avaliar_modelo_metricas_validas(df_amostra_voos):
     X_train, X_test, y_train, y_test = dividir_dados(df_feat, target)
     modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
     resultado = avaliar_modelo(modelo, X_test, y_test)
-    for chave in ["accuracy", "precision", "recall", "f1", "roc_auc"]:
+    for chave in ["accuracy", "precision", "recall", "f1", "roc_auc", "pr_auc"]:
         assert 0.0 <= resultado[chave] <= 1.0, f"{chave} = {resultado[chave]} fora do range"
 
 
@@ -136,3 +138,56 @@ def test_treinar_modelo_random_forest(df_amostra_voos):
     X_train, _, y_train, _ = dividir_dados(df_feat, target)
     modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
     assert hasattr(modelo, "predict")
+
+
+def test_treinar_modelo_random_forest_balanced(df_amostra_voos):
+    """Random Forest balanced deve treinar sem erro."""
+    df_feat, target = _preparar_dados(df_amostra_voos)
+    X_train, _, y_train, _ = dividir_dados(df_feat, target)
+    modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest_balanced")
+    assert hasattr(modelo, "predict")
+
+
+def test_treinar_modelo_gradient_boosting_balanced(df_amostra_voos):
+    """Gradient Boosting balanced deve treinar sem erro."""
+    df_feat, target = _preparar_dados(df_amostra_voos)
+    X_train, _, y_train, _ = dividir_dados(df_feat, target)
+    modelo = treinar_modelo(X_train, y_train, modelo_nome="gradient_boosting_balanced")
+    assert hasattr(modelo, "predict")
+
+
+def test_plotar_curva_precision_recall_retorna_figura(df_amostra_voos):
+    """Curva Precision-Recall deve retornar Figure válido."""
+    df_feat, target = _preparar_dados(df_amostra_voos)
+    X_train, X_test, y_train, y_test = dividir_dados(df_feat, target)
+    modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
+    y_prob = modelo.predict_proba(X_test)[:, 1]
+    fig = plotar_curva_precision_recall(y_test, y_prob, nome_modelo="RF")
+    assert isinstance(fig, matplotlib.figure.Figure)
+
+
+def test_analise_threshold_retorna_figura_e_dataframe(df_amostra_voos):
+    """Análise de threshold deve retornar Figure e DataFrame."""
+    import pandas as pd
+
+    df_feat, target = _preparar_dados(df_amostra_voos)
+    X_train, X_test, y_train, y_test = dividir_dados(df_feat, target)
+    modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
+    y_prob = modelo.predict_proba(X_test)[:, 1]
+    fig, df_thresh = analise_threshold(y_test, y_prob, nome_modelo="RF")
+    assert isinstance(fig, matplotlib.figure.Figure)
+    assert isinstance(df_thresh, pd.DataFrame)
+    assert "threshold" in df_thresh.columns
+    assert "precision" in df_thresh.columns
+    assert "recall" in df_thresh.columns
+    assert "f1" in df_thresh.columns
+    assert len(df_thresh) > 0
+
+
+def test_avaliar_modelo_pr_auc_valido(df_amostra_voos):
+    """PR-AUC deve estar entre 0.0 e 1.0."""
+    df_feat, target = _preparar_dados(df_amostra_voos)
+    X_train, X_test, y_train, y_test = dividir_dados(df_feat, target)
+    modelo = treinar_modelo(X_train, y_train, modelo_nome="random_forest")
+    resultado = avaliar_modelo(modelo, X_test, y_test)
+    assert 0.0 <= resultado["pr_auc"] <= 1.0
